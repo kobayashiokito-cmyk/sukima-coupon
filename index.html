@@ -507,7 +507,7 @@ body {
   background-clip: text;
 }
 
-/* Coupon Code Box */
+/* Barcode Box */
 .modal-code-box {
   background: #f7f3ed;
   border: 1.5px dashed #c9bfb0;
@@ -523,35 +523,39 @@ body {
   margin-bottom: 6px;
 }
 
-.modal-code {
-  font-size: 20px;
-  font-weight: 900;
-  letter-spacing: 0.15em;
+.modal-barcode-wrap {
+  background: #fff;
+  border: 1px solid #ddd2c3;
+  border-radius: 8px;
+  padding: 8px 8px 4px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.2s ease;
+}
+
+.modal-barcode-wrap:active {
+  background: #f3ece2;
+}
+
+.modal-barcode {
+  display: block;
+  width: 100%;
+  height: 84px;
+  object-fit: contain;
+}
+
+.modal-barcode-number {
+  margin-top: 4px;
+  font-size: 12px;
+  letter-spacing: 0.12em;
   color: #2c2c2c;
   font-family: 'Courier New', monospace;
 }
 
-.modal-copy-btn {
-  background: none;
-  border: 1px solid #c9bfb0;
-  border-radius: 6px;
-  padding: 6px 14px;
-  font-size: 11px;
-  color: #6b6156;
-  cursor: pointer;
-  margin-top: 8px;
-  transition: all 0.2s ease;
-  letter-spacing: 0.04em;
-}
-
-.modal-copy-btn:active {
-  background: #f0ebe3;
-}
-
-.modal-copy-btn.copied {
-  background: #4caf50;
-  color: #fff;
-  border-color: #4caf50;
+.modal-barcode-hint {
+  margin-top: 6px;
+  font-size: 10px;
+  color: #8a7e6e;
 }
 
 .modal-notice {
@@ -791,9 +795,12 @@ body {
     <div class="modal-sub-text">これはあなた専用です</div>
     <div class="modal-discount" id="modalDiscount"></div>
     <div class="modal-code-box">
-      <div class="modal-code-label">クーポンコード</div>
-      <div class="modal-code" id="modalCode"></div>
-      <button class="modal-copy-btn" id="modalCopyBtn" onclick="copyCode()">コピーする</button>
+      <div class="modal-code-label">スキャン用バーコード</div>
+      <div class="modal-barcode-wrap" id="modalBarcodeWrap" onclick="playScanBeep()">
+        <img src="" alt="クーポンバーコード" class="modal-barcode" id="modalBarcode">
+        <div class="modal-barcode-number" id="modalBarcodeNumber"></div>
+      </div>
+      <div class="modal-barcode-hint">バーコードをレジで提示してください（タップでピッ音）</div>
     </div>
     <div class="modal-notice">会計時にこの画面を見せてください</div>
     <button class="modal-close-btn" onclick="closeModal()">とじる</button>
@@ -925,15 +932,14 @@ function showModal(id) {
   const overlay = document.getElementById('modalOverlay');
   const daruma = document.getElementById('modalDaruma');
   const discount = document.getElementById('modalDiscount');
-  const code = document.getElementById('modalCode');
-  const copyBtn = document.getElementById('modalCopyBtn');
+  const barcode = document.getElementById('modalBarcode');
+  const barcodeNumber = document.getElementById('modalBarcodeNumber');
 
   daruma.src = coupon.image;
   discount.textContent = coupon.discount;
   discount.className = 'modal-discount ' + coupon.discountClass;
-  code.textContent = coupon.code;
-  copyBtn.textContent = 'コピーする';
-  copyBtn.classList.remove('copied');
+  barcode.src = createBarcodeDataUrl(coupon.code);
+  barcodeNumber.textContent = coupon.code;
 
   // Show overlay
   overlay.style.display = 'flex';
@@ -976,39 +982,60 @@ document.getElementById('modalOverlay').addEventListener('click', function(e) {
   }
 });
 
-// ===== Copy Code =====
-function copyCode() {
-  const code = document.getElementById('modalCode').textContent;
-  const btn = document.getElementById('modalCopyBtn');
+// ===== Barcode + Scan Beep =====
+function createBarcodeDataUrl(code) {
+  var clean = String(code || '').replace(/[^0-9A-Z]/g, '');
+  var width = 300;
+  var height = 84;
+  var x = 12;
+  var bars = '';
 
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(code).then(function() {
-      btn.textContent = 'コピーしました！';
-      btn.classList.add('copied');
-      setTimeout(function() {
-        btn.textContent = 'コピーする';
-        btn.classList.remove('copied');
-      }, 2000);
-    });
-  } else {
-    // Fallback
-    var textarea = document.createElement('textarea');
-    textarea.value = code;
-    textarea.style.position = 'fixed';
-    textarea.style.opacity = '0';
-    document.body.appendChild(textarea);
-    textarea.select();
-    try {
-      document.execCommand('copy');
-      btn.textContent = 'コピーしました！';
-      btn.classList.add('copied');
-      setTimeout(function() {
-        btn.textContent = 'コピーする';
-        btn.classList.remove('copied');
-      }, 2000);
-    } catch(e) {}
-    document.body.removeChild(textarea);
+  // Deterministic pseudo pattern from coupon code
+  for (var i = 0; i < clean.length; i++) {
+    var n = clean.charCodeAt(i);
+    var w1 = (n % 3) + 1;
+    var w2 = ((n >> 2) % 3) + 1;
+    var w3 = ((n >> 4) % 3) + 1;
+    bars += '<rect x="' + x + '" y="8" width="' + w1 + '" height="58" fill="#111"/>';
+    x += w1 + 1;
+    bars += '<rect x="' + x + '" y="8" width="' + w2 + '" height="58" fill="#111"/>';
+    x += w2 + 1;
+    bars += '<rect x="' + x + '" y="8" width="' + w3 + '" height="58" fill="#111"/>';
+    x += w3 + 2;
   }
+
+  var svg = ''
+    + '<svg xmlns="http://www.w3.org/2000/svg" width="' + width + '" height="' + height + '" viewBox="0 0 ' + width + ' ' + height + '">'
+    + '<rect width="100%" height="100%" fill="#fff"/>'
+    + '<rect x="8" y="8" width="2" height="62" fill="#111"/>'
+    + bars
+    + '<rect x="' + (width - 10) + '" y="8" width="2" height="62" fill="#111"/>'
+    + '</svg>';
+
+  return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+}
+
+function playScanBeep() {
+  var AudioCtx = window.AudioContext || window.webkitAudioContext;
+  if (!AudioCtx) return;
+  var ctx = new AudioCtx();
+  var osc = ctx.createOscillator();
+  var gain = ctx.createGain();
+  osc.type = 'square';
+  osc.frequency.value = 1900;
+  gain.gain.value = 0.001;
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+
+  var now = ctx.currentTime;
+  gain.gain.exponentialRampToValueAtTime(0.16, now + 0.005);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.11);
+  osc.start(now);
+  osc.stop(now + 0.12);
+
+  setTimeout(function() {
+    ctx.close();
+  }, 180);
 }
 
 // ===== Confetti =====
