@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ダルマむしクーポン | スキマ雑貨</title>
+<style>
+/* ===== Reset & Base ===== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Noto Sans JP', 'Yu Gothic', sans-serif;
+  background-color: #f5f0e8;
+  color: #2c2c2c;
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+}
+
+/* ===== App Container ===== */
+.app {
+  width: 100%;
+  max-width: 420px;
+  min-height: 100vh;
+  background-color: #f5f0e8;
+  position: relative;
+}
+
+/* ===== Header ===== */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: #c62828;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 52px;
+  padding: 0 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.header-close {
+  position: absolute;
+  left: 16px;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 0;
+  letter-spacing: 0.02em;
+}
+
+.header-close svg {
+  width: 18px;
+  height: 18px;
+}
+
+.header-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.08em;
+}
+
+/* ===== Hero Section ===== */
+.hero {
+  background: linear-gradient(180deg, #c62828 0%, #d32f2f 40%, #f5f0e8 100%);
+  padding: 28px 20px 36px;
+  text-align: center;
+}
+
+.hero-daruma {
+  width: 80px;
+  height: auto;
+  animation: heroFloat 3s ease-in-out infinite;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.2));
+}
+
+@keyframes heroFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.hero-title {
+  color: #fff;
+  font-size: 20px;
+  font-weight: 700;
+  margin-top: 12px;
+  letter-spacing: 0.1em;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+
+.hero-subtitle {
+  color: rgba(255,255,255,0.85);
+  font-size: 12px;
+  margin-top: 6px;
+  letter-spacing: 0.06em;
+}
+
+/* ===== Section Title ===== */
+.section-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 24px 20px 16px;
+}
+
+.section-label-line {
+  flex: 1;
+  height: 1px;
+  background: #c9bfb0;
+}
+
+.section-label-text {
+  font-size: 12px;
+  color: #8a7e6e;
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+}
+
+/* ===== Coupon Card ===== */
+.coupon-list {
+  padding: 0 16px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.coupon-card {
+  background: #fff;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  position: relative;
+  transition: transform 0.2s ease;
+}
+
+.coupon-card:active {
+  transform: scale(0.98);
+}
+
+/* Ticket notch decoration */
+.coupon-card::before,
+.coupon-card::after {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background: #f5f0e8;
+  border-radius: 50%;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+}
+
+.coupon-card::before {
+  left: -9px;
+}
+
+.coupon-card::after {
+  right: -9px;
+}
+
+/* Dashed line between notches */
+.coupon-card-inner {
+  position: relative;
+}
+
+.coupon-card-inner::before {
+  content: '';
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  top: 50%;
+  border-top: 1.5px dashed #e0d8cc;
+  z-index: 1;
+}
+
+/* Top section */
+.coupon-top {
+  padding: 20px 20px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  position: relative;
+  z-index: 3;
+}
+
+.coupon-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 2px solid #f0ebe3;
+}
+
+.coupon-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.coupon-discount {
+  font-size: 26px;
+  font-weight: 900;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.coupon-discount.red {
+  color: #c62828;
+}
+
+.coupon-discount.gold {
+  color: #8b6914;
+}
+
+.coupon-discount.special {
+  background: linear-gradient(135deg, #c62828, #8b6914);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.coupon-name {
+  font-size: 12px;
+  color: #6b6156;
+  margin-top: 2px;
+}
+
+.coupon-badge {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.coupon-badge.standard {
+  background: #fce4ec;
+  color: #c62828;
+}
+
+.coupon-badge.rare {
+  background: linear-gradient(135deg, #fff8e1, #ffe082);
+  color: #8b6914;
+  box-shadow: 0 1px 4px rgba(139,105,20,0.15);
+}
+
+/* Bottom section */
+.coupon-bottom {
+  padding: 14px 20px 18px;
+  position: relative;
+  z-index: 3;
+}
+
+.coupon-conditions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.coupon-condition-tag {
+  font-size: 10.5px;
+  color: #8a7e6e;
+  background: #f7f3ed;
+  padding: 3px 8px;
+  border-radius: 4px;
+  line-height: 1.4;
+}
+
+.coupon-expiry {
+  font-size: 11px;
+  color: #a0937f;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.coupon-expiry svg {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+
+/* Get Button */
+.coupon-btn {
+  width: 100%;
+  padding: 13px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.06em;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.coupon-btn.red {
+  background: #c62828;
+  color: #fff;
+}
+
+.coupon-btn.red:hover {
+  background: #b71c1c;
+}
+
+.coupon-btn.gold {
+  background: linear-gradient(135deg, #8b6914, #b8860b);
+  color: #fff;
+}
+
+.coupon-btn.gold:hover {
+  background: linear-gradient(135deg, #7a5c12, #a07609);
+}
+
+.coupon-btn.special-btn {
+  background: linear-gradient(135deg, #c62828, #8b6914);
+  color: #fff;
+}
+
+.coupon-btn.special-btn:hover {
+  background: linear-gradient(135deg, #b71c1c, #7a5c12);
+}
+
+.coupon-btn:active {
+  transform: scale(0.97);
+}
+
+.coupon-btn.acquired {
+  background: #d5cfc5 !important;
+  color: #8a7e6e !important;
+  cursor: default;
+}
+
+.coupon-btn.acquired:active {
+  transform: none;
+}
+
+/* Acquired overlay */
+.coupon-acquired-badge {
+  display: none;
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: #4caf50;
+  color: #fff;
+  font-size: 10px;
+  padding: 3px 10px;
+  border-radius: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  z-index: 5;
+}
+
+.coupon-card.is-acquired .coupon-acquired-badge {
+  display: block;
+}
+
+.coupon-card.is-acquired .coupon-badge {
+  display: none;
+}
+
+/* ===== Modal Overlay ===== */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.55);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.modal-overlay.active {
+  display: flex;
+  opacity: 1;
+}
+
+.modal-overlay.fade-in {
+  opacity: 1;
+}
+
+/* Modal Content */
+.modal {
+  background: #fff;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 340px;
+  padding: 32px 24px 28px;
+  text-align: center;
+  position: relative;
+  transform: scale(0.8) translateY(20px);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-overlay.fade-in .modal {
+  transform: scale(1) translateY(0);
+}
+
+.modal-daruma {
+  width: 90px;
+  height: auto;
+  margin-bottom: 16px;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.15));
+}
+
+.modal-daruma.bounce {
+  animation: darumaBounce 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes darumaBounce {
+  0% { transform: scale(0) rotate(-10deg); opacity: 0; }
+  50% { transform: scale(1.15) rotate(5deg); opacity: 1; }
+  70% { transform: scale(0.95) rotate(-3deg); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+.modal-daruma.wobble {
+  animation: darumaWobble 2s ease-in-out infinite;
+  animation-delay: 0.8s;
+}
+
+@keyframes darumaWobble {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(3deg); }
+  75% { transform: rotate(-3deg); }
+}
+
+.modal-main-text {
+  font-size: 16px;
+  font-weight: 700;
+  color: #2c2c2c;
+  margin-bottom: 6px;
+  line-height: 1.5;
+}
+
+.modal-sub-text {
+  font-size: 12px;
+  color: #8a7e6e;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.modal-discount {
+  font-size: 28px;
+  font-weight: 900;
+  margin-bottom: 16px;
+  line-height: 1.2;
+}
+
+.modal-discount.red {
+  color: #c62828;
+}
+
+.modal-discount.gold {
+  color: #8b6914;
+}
+
+.modal-discount.special {
+  background: linear-gradient(135deg, #c62828, #8b6914);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Coupon Code Box */
+.modal-code-box {
+  background: #f7f3ed;
+  border: 1.5px dashed #c9bfb0;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+}
+
+.modal-code-label {
+  font-size: 10px;
+  color: #a0937f;
+  letter-spacing: 0.1em;
+  margin-bottom: 6px;
+}
+
+.modal-code {
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: 0.15em;
+  color: #2c2c2c;
+  font-family: 'Courier New', monospace;
+}
+
+.modal-copy-btn {
+  background: none;
+  border: 1px solid #c9bfb0;
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 11px;
+  color: #6b6156;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: all 0.2s ease;
+  letter-spacing: 0.04em;
+}
+
+.modal-copy-btn:active {
+  background: #f0ebe3;
+}
+
+.modal-copy-btn.copied {
+  background: #4caf50;
+  color: #fff;
+  border-color: #4caf50;
+}
+
+.modal-notice {
+  font-size: 11px;
+  color: #a0937f;
+  margin-top: 16px;
+  line-height: 1.6;
+}
+
+.modal-close-btn {
+  margin-top: 20px;
+  background: #f0ebe3;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 40px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #6b6156;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  letter-spacing: 0.04em;
+}
+
+.modal-close-btn:hover {
+  background: #e5ddd2;
+}
+
+.modal-close-btn:active {
+  transform: scale(0.97);
+}
+
+/* ===== Confetti ===== */
+.confetti-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1001;
+  overflow: hidden;
+}
+
+.confetti {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  top: -10px;
+  animation: confettiFall 2.5s ease-out forwards;
+}
+
+@keyframes confettiFall {
+  0% {
+    transform: translateY(0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg) scale(0.3);
+    opacity: 0;
+  }
+}
+
+/* ===== Footer ===== */
+.footer {
+  text-align: center;
+  padding: 20px 20px 40px;
+}
+
+.footer-daruma {
+  width: 36px;
+  height: auto;
+  opacity: 0.4;
+  margin-bottom: 8px;
+}
+
+.footer-text {
+  font-size: 10px;
+  color: #b0a797;
+  letter-spacing: 0.06em;
+  line-height: 1.6;
+}
+
+/* ===== Sparkle decoration ===== */
+.sparkle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: #ffd54f;
+  border-radius: 50%;
+  animation: sparkle 2s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0; transform: scale(0); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+/* ===== Utility ===== */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+}
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+  <!-- Header -->
+  <header class="header">
+    <button class="header-close" onclick="window.history.back()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+      閉じる
+    </button>
+    <span class="header-title">クーポン</span>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <img src="images/daruma-red.jpg" alt="ダルマむし" class="hero-daruma">
+    <h1 class="hero-title">ダルマむしクーポン</h1>
+    <p class="hero-subtitle">スキマ雑貨からの小さな贈りもの</p>
+  </section>
+
+  <!-- Section Label -->
+  <div class="section-label">
+    <span class="section-label-line"></span>
+    <span class="section-label-text">使えるクーポン</span>
+    <span class="section-label-line"></span>
+  </div>
+
+  <!-- Coupon List -->
+  <div class="coupon-list">
+
+    <!-- Coupon 1: 10%OFF (Red Daruma) -->
+    <div class="coupon-card" id="coupon-1" data-coupon-id="1">
+      <div class="coupon-acquired-badge">獲得済み</div>
+      <div class="coupon-card-inner">
+        <div class="coupon-top">
+          <img src="images/daruma-red.jpg" alt="赤ダルマむし" class="coupon-icon">
+          <div class="coupon-info">
+            <div class="coupon-discount red">10%OFF</div>
+            <div class="coupon-name">全商品対象・お会計から割引</div>
+          </div>
+          <span class="coupon-badge standard">おすすめ</span>
+        </div>
+        <div class="coupon-bottom">
+          <div class="coupon-conditions">
+            <span class="coupon-condition-tag">1人1回限り</span>
+            <span class="coupon-condition-tag">併用不可</span>
+            <span class="coupon-condition-tag">会計時に画面提示</span>
+          </div>
+          <div class="coupon-expiry">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            2026年4月30日まで
+          </div>
+          <button class="coupon-btn red" onclick="acquireCoupon(1)">クーポンを獲得する</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Coupon 2: 500円OFF (White Daruma) -->
+    <div class="coupon-card" id="coupon-2" data-coupon-id="2">
+      <div class="coupon-acquired-badge">獲得済み</div>
+      <div class="coupon-card-inner">
+        <div class="coupon-top">
+          <img src="images/daruma-white.jpg" alt="白ダルマむし" class="coupon-icon">
+          <div class="coupon-info">
+            <div class="coupon-discount gold">500円OFF</div>
+            <div class="coupon-name">2,000円以上のお買い物に</div>
+          </div>
+          <span class="coupon-badge standard">定番</span>
+        </div>
+        <div class="coupon-bottom">
+          <div class="coupon-conditions">
+            <span class="coupon-condition-tag">1人1回限り</span>
+            <span class="coupon-condition-tag">併用不可</span>
+            <span class="coupon-condition-tag">会計時に画面提示</span>
+          </div>
+          <div class="coupon-expiry">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            2026年4月30日まで
+          </div>
+          <button class="coupon-btn gold" onclick="acquireCoupon(2)">クーポンを獲得する</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Coupon 3: コーヒー100円引 (Special) -->
+    <div class="coupon-card" id="coupon-3" data-coupon-id="3">
+      <div class="coupon-acquired-badge">獲得済み</div>
+      <div class="coupon-card-inner">
+        <div class="coupon-top">
+          <img src="images/daruma-red.jpg" alt="ダルマむし" class="coupon-icon" style="border-color: #ffe082;">
+          <div class="coupon-info">
+            <div class="coupon-discount special">コーヒー100円引</div>
+            <div class="coupon-name">ダルマむし珈琲にだけ使える秘密のクーポン</div>
+          </div>
+          <span class="coupon-badge rare">レア</span>
+        </div>
+        <div class="coupon-bottom">
+          <div class="coupon-conditions">
+            <span class="coupon-condition-tag">1人1回限り</span>
+            <span class="coupon-condition-tag">併用不可</span>
+            <span class="coupon-condition-tag">会計時に画面提示</span>
+            <span class="coupon-condition-tag" style="background:#fff8e1;color:#8b6914;">ダルマむし珈琲限定</span>
+          </div>
+          <div class="coupon-expiry">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            2026年4月30日まで
+          </div>
+          <button class="coupon-btn special-btn" onclick="acquireCoupon(3)">クーポンを獲得する</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <img src="images/daruma-white.jpg" alt="" class="footer-daruma">
+    <p class="footer-text">スキマ雑貨<br>ダルマむしがいつでも見守っています</p>
+  </footer>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modal">
+    <img src="" alt="ダルマむし" class="modal-daruma" id="modalDaruma">
+    <div class="modal-main-text">ダルマむしが<br>クーポンを運んできました</div>
+    <div class="modal-sub-text">これはあなた専用です</div>
+    <div class="modal-discount" id="modalDiscount"></div>
+    <div class="modal-code-box">
+      <div class="modal-code-label">クーポンコード</div>
+      <div class="modal-code" id="modalCode"></div>
+      <button class="modal-copy-btn" id="modalCopyBtn" onclick="copyCode()">コピーする</button>
+    </div>
+    <div class="modal-notice">会計時にこの画面を見せてください</div>
+    <button class="modal-close-btn" onclick="closeModal()">とじる</button>
+  </div>
+</div>
+
+<!-- Confetti Container -->
+<div class="confetti-container" id="confettiContainer"></div>
+
+<script>
+// ===== Coupon Data =====
+const coupons = {
+  1: {
+    discount: '10%OFF',
+    discountClass: 'red',
+    code: 'DARUMA-4821',
+    image: 'images/daruma-red.jpg',
+    btnClass: 'red'
+  },
+  2: {
+    discount: '500円OFF',
+    discountClass: 'gold',
+    code: 'DARUMA-1050',
+    image: 'images/daruma-white.jpg',
+    btnClass: 'gold'
+  },
+  3: {
+    discount: 'コーヒー100円引',
+    discountClass: 'special',
+    code: 'DARUMA-7732',
+    image: 'images/daruma-red.jpg',
+    btnClass: 'special-btn'
+  }
+};
+
+// ===== LocalStorage Management =====
+function getAcquired() {
+  try {
+    return JSON.parse(localStorage.getItem('darumamushi_coupons') || '{}');
+  } catch(e) {
+    return {};
+  }
+}
+
+function setAcquired(id) {
+  const data = getAcquired();
+  data[id] = { acquired: true, timestamp: Date.now() };
+  localStorage.setItem('darumamushi_coupons', JSON.stringify(data));
+}
+
+// ===== Initialize State =====
+function initState() {
+  const acquired = getAcquired();
+  Object.keys(acquired).forEach(function(id) {
+    markAsAcquired(parseInt(id));
+  });
+}
+
+function markAsAcquired(id) {
+  const card = document.getElementById('coupon-' + id);
+  if (!card) return;
+  card.classList.add('is-acquired');
+  const btn = card.querySelector('.coupon-btn');
+  if (btn) {
+    btn.classList.add('acquired');
+    btn.textContent = '獲得済み';
+    btn.onclick = function() { showAcquiredModal(id); };
+  }
+}
+
+// ===== Acquire Coupon =====
+function acquireCoupon(id) {
+  const acquired = getAcquired();
+  if (acquired[id]) {
+    showAcquiredModal(id);
+    return;
+  }
+
+  // Save to localStorage
+  setAcquired(id);
+  markAsAcquired(id);
+
+  // Show modal
+  showModal(id);
+
+  // Confetti
+  launchConfetti();
+}
+
+// ===== Show Modal =====
+function showModal(id) {
+  const coupon = coupons[id];
+  if (!coupon) return;
+
+  const overlay = document.getElementById('modalOverlay');
+  const daruma = document.getElementById('modalDaruma');
+  const discount = document.getElementById('modalDiscount');
+  const code = document.getElementById('modalCode');
+  const copyBtn = document.getElementById('modalCopyBtn');
+
+  daruma.src = coupon.image;
+  discount.textContent = coupon.discount;
+  discount.className = 'modal-discount ' + coupon.discountClass;
+  code.textContent = coupon.code;
+  copyBtn.textContent = 'コピーする';
+  copyBtn.classList.remove('copied');
+
+  // Show overlay
+  overlay.style.display = 'flex';
+  // Force reflow
+  overlay.offsetHeight;
+  overlay.classList.add('active', 'fade-in');
+
+  // Daruma bounce animation
+  daruma.classList.remove('bounce', 'wobble');
+  void daruma.offsetHeight;
+  daruma.classList.add('bounce');
+
+  setTimeout(function() {
+    daruma.classList.add('wobble');
+  }, 800);
+
+  // Prevent body scroll
+  document.body.style.overflow = 'hidden';
+}
+
+function showAcquiredModal(id) {
+  showModal(id);
+}
+
+// ===== Close Modal =====
+function closeModal() {
+  const overlay = document.getElementById('modalOverlay');
+  overlay.classList.remove('fade-in');
+  setTimeout(function() {
+    overlay.classList.remove('active');
+    overlay.style.display = 'none';
+    document.body.style.overflow = '';
+  }, 300);
+}
+
+// Close on overlay click
+document.getElementById('modalOverlay').addEventListener('click', function(e) {
+  if (e.target === this) {
+    closeModal();
+  }
+});
+
+// ===== Copy Code =====
+function copyCode() {
+  const code = document.getElementById('modalCode').textContent;
+  const btn = document.getElementById('modalCopyBtn');
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(code).then(function() {
+      btn.textContent = 'コピーしました！';
+      btn.classList.add('copied');
+      setTimeout(function() {
+        btn.textContent = 'コピーする';
+        btn.classList.remove('copied');
+      }, 2000);
+    });
+  } else {
+    // Fallback
+    var textarea = document.createElement('textarea');
+    textarea.value = code;
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+      document.execCommand('copy');
+      btn.textContent = 'コピーしました！';
+      btn.classList.add('copied');
+      setTimeout(function() {
+        btn.textContent = 'コピーする';
+        btn.classList.remove('copied');
+      }, 2000);
+    } catch(e) {}
+    document.body.removeChild(textarea);
+  }
+}
+
+// ===== Confetti =====
+function launchConfetti() {
+  var container = document.getElementById('confettiContainer');
+  var colors = ['#c62828', '#ffd54f', '#fff', '#8b6914', '#f5f0e8', '#ff8a80'];
+  var count = 30;
+
+  for (var i = 0; i < count; i++) {
+    (function(index) {
+      setTimeout(function() {
+        var confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = (Math.random() * 100) + '%';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.width = (Math.random() * 8 + 4) + 'px';
+        confetti.style.height = (Math.random() * 8 + 4) + 'px';
+        confetti.style.animationDuration = (Math.random() * 1.5 + 1.5) + 's';
+        confetti.style.animationDelay = '0s';
+        if (Math.random() > 0.5) {
+          confetti.style.borderRadius = '50%';
+        }
+        container.appendChild(confetti);
+
+        setTimeout(function() {
+          if (confetti.parentNode) {
+            confetti.parentNode.removeChild(confetti);
+          }
+        }, 3000);
+      }, index * 40);
+    })(i);
+  }
+}
+
+// ===== Init =====
+document.addEventListener('DOMContentLoaded', function() {
+  initState();
+});
+</script>
+
+</body>
+</html>
