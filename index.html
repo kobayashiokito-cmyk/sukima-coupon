@@ -107,6 +107,14 @@ body {
   text-shadow: 0 2px 8px rgba(0,0,0,0.25);
 }
 
+.hero-title-image {
+  display: block;
+  width: min(320px, 90%);
+  height: auto;
+  margin: 12px auto 0;
+  filter: drop-shadow(0 3px 8px rgba(0,0,0,0.25));
+}
+
 .hero-subtitle {
   color: rgba(255,255,255,0.92);
   font-size: 13px;
@@ -363,6 +371,17 @@ body {
 
 .coupon-btn.acquired:active {
   transform: none;
+}
+
+.coupon-btn.repeatable-ready {
+  padding: 15px;
+  font-size: 16px;
+  letter-spacing: 0.08em;
+  box-shadow: 0 3px 10px rgba(139, 105, 20, 0.28);
+}
+
+.coupon-btn.repeatable-ready:hover {
+  filter: brightness(1.04);
 }
 
 .coupon-btn:disabled,
@@ -682,7 +701,7 @@ body {
 
   <!-- Hero -->
   <section class="hero">
-    <h1 class="hero-title">ダルマむしクーポン</h1>
+    <img src="special-coupon.svg" alt="SPECIAL COUPON" class="hero-title-image">
     <p class="hero-subtitle">スキマ雑貨からの小さな贈りもの</p>
   </section>
 
@@ -835,7 +854,8 @@ const coupons = {
     code: 'DARUMA-7732',
     image: 'S__135577604_0.jpg',
     btnClass: 'special-btn',
-    soldOut: false
+    soldOut: false,
+    reusable: true
   }
 };
 
@@ -854,17 +874,34 @@ function setAcquired(id) {
   localStorage.setItem('darumamushi_coupons', JSON.stringify(data));
 }
 
+function removeAcquired(id) {
+  const data = getAcquired();
+  if (!data[id]) return;
+  delete data[id];
+  localStorage.setItem('darumamushi_coupons', JSON.stringify(data));
+}
+
 // ===== Initialize State =====
 function initState() {
   applySoldOutState();
   const acquired = getAcquired();
   Object.keys(acquired).forEach(function(id) {
-    markAsAcquired(parseInt(id, 10));
+    var couponId = parseInt(id, 10);
+    if (isReusableCoupon(couponId)) {
+      // Reusable coupons should never stay in acquired state.
+      removeAcquired(couponId);
+      return;
+    }
+    markAsAcquired(couponId);
   });
 }
 
 function isCouponSoldOut(id) {
   return Boolean(coupons[id] && coupons[id].soldOut);
+}
+
+function isReusableCoupon(id) {
+  return Boolean(coupons[id] && coupons[id].reusable);
 }
 
 function markAsSoldOut(id) {
@@ -888,7 +925,7 @@ function applySoldOutState() {
 }
 
 function markAsAcquired(id) {
-  if (isCouponSoldOut(id)) return;
+  if (isCouponSoldOut(id) || isReusableCoupon(id)) return;
   const card = document.getElementById('coupon-' + id);
   if (!card) return;
   card.classList.add('is-acquired');
@@ -900,10 +937,29 @@ function markAsAcquired(id) {
   }
 }
 
+function markAsReusableReady(id) {
+  const card = document.getElementById('coupon-' + id);
+  if (!card) return;
+  card.classList.remove('is-acquired');
+  const btn = card.querySelector('.coupon-btn');
+  if (!btn) return;
+  btn.classList.remove('acquired');
+  btn.classList.add('repeatable-ready');
+  btn.textContent = 'もう一度使う';
+  btn.onclick = function() { acquireCoupon(id); };
+}
+
 // ===== Acquire Coupon =====
 function acquireCoupon(id) {
   if (isCouponSoldOut(id)) {
     markAsSoldOut(id);
+    return;
+  }
+
+  if (isReusableCoupon(id)) {
+    markAsReusableReady(id);
+    showModal(id);
+    launchConfetti();
     return;
   }
 
