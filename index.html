@@ -360,6 +360,20 @@ body {
   transform: none;
 }
 
+.coupon-btn:disabled,
+.coupon-btn.is-sold-out {
+  opacity: 0.6;
+  cursor: not-allowed;
+  filter: grayscale(0.25);
+  transform: none;
+  box-shadow: none;
+}
+
+.coupon-btn:disabled:hover,
+.coupon-btn.is-sold-out:hover {
+  transform: none;
+}
+
 /* Acquired overlay */
 .coupon-acquired-badge {
   display: none;
@@ -797,21 +811,24 @@ const coupons = {
     discountClass: 'red',
     code: 'DARUMA-4821',
     image: 'S__135577604_0.jpg',
-    btnClass: 'red'
+    btnClass: 'red',
+    soldOut: true
   },
   2: {
     discount: '500円OFF',
     discountClass: 'gold',
     code: 'DARUMA-1050',
     image: 'S__135577606_0.jpg',
-    btnClass: 'gold'
+    btnClass: 'gold',
+    soldOut: false
   },
   3: {
     discount: 'コーヒー100円引',
     discountClass: 'special',
     code: 'DARUMA-7732',
     image: 'S__135577604_0.jpg',
-    btnClass: 'special-btn'
+    btnClass: 'special-btn',
+    soldOut: false
   }
 };
 
@@ -832,13 +849,39 @@ function setAcquired(id) {
 
 // ===== Initialize State =====
 function initState() {
+  applySoldOutState();
   const acquired = getAcquired();
   Object.keys(acquired).forEach(function(id) {
-    markAsAcquired(parseInt(id));
+    markAsAcquired(parseInt(id, 10));
+  });
+}
+
+function isCouponSoldOut(id) {
+  return Boolean(coupons[id] && coupons[id].soldOut);
+}
+
+function markAsSoldOut(id) {
+  const card = document.getElementById('coupon-' + id);
+  if (!card) return;
+  const btn = card.querySelector('.coupon-btn');
+  if (btn) {
+    btn.disabled = true;
+    btn.classList.add('is-sold-out');
+    btn.textContent = '売り切れ';
+    btn.onclick = null;
+  }
+}
+
+function applySoldOutState() {
+  Object.keys(coupons).forEach(function(id) {
+    if (isCouponSoldOut(id)) {
+      markAsSoldOut(id);
+    }
   });
 }
 
 function markAsAcquired(id) {
+  if (isCouponSoldOut(id)) return;
   const card = document.getElementById('coupon-' + id);
   if (!card) return;
   card.classList.add('is-acquired');
@@ -852,6 +895,11 @@ function markAsAcquired(id) {
 
 // ===== Acquire Coupon =====
 function acquireCoupon(id) {
+  if (isCouponSoldOut(id)) {
+    markAsSoldOut(id);
+    return;
+  }
+
   const acquired = getAcquired();
   if (acquired[id]) {
     showAcquiredModal(id);
