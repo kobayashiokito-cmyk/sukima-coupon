@@ -528,13 +528,8 @@ body {
   border: 1px solid #ddd2c3;
   border-radius: 8px;
   padding: 8px 8px 4px;
-  cursor: pointer;
+  cursor: default;
   user-select: none;
-  transition: background 0.2s ease;
-}
-
-.modal-barcode-wrap:active {
-  background: #f3ece2;
 }
 
 .modal-barcode {
@@ -796,11 +791,11 @@ body {
     <div class="modal-discount" id="modalDiscount"></div>
     <div class="modal-code-box">
       <div class="modal-code-label">スキャン用バーコード</div>
-      <div class="modal-barcode-wrap" id="modalBarcodeWrap" onclick="playScanBeep()">
-        <img src="" alt="クーポンバーコード" class="modal-barcode" id="modalBarcode">
+      <div class="modal-barcode-wrap" id="modalBarcodeWrap">
+        <svg aria-label="クーポンバーコード" class="modal-barcode" id="modalBarcode"></svg>
         <div class="modal-barcode-number" id="modalBarcodeNumber"></div>
       </div>
-      <div class="modal-barcode-hint">バーコードをレジで提示してください（タップでピッ音）</div>
+      <div class="modal-barcode-hint">バーコードをレジで提示してください</div>
     </div>
     <div class="modal-notice">会計時にこの画面を見せてください</div>
     <button class="modal-close-btn" onclick="closeModal()">とじる</button>
@@ -810,6 +805,7 @@ body {
 <!-- Confetti Container -->
 <div class="confetti-container" id="confettiContainer"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 <script>
 // ===== Coupon Data =====
 const coupons = {
@@ -938,7 +934,7 @@ function showModal(id) {
   daruma.src = coupon.image;
   discount.textContent = coupon.discount;
   discount.className = 'modal-discount ' + coupon.discountClass;
-  barcode.src = createBarcodeDataUrl(coupon.code);
+  renderBarcode(coupon.code, barcode);
   barcodeNumber.textContent = coupon.code;
 
   // Show overlay
@@ -982,60 +978,28 @@ document.getElementById('modalOverlay').addEventListener('click', function(e) {
   }
 });
 
-// ===== Barcode + Scan Beep =====
-function createBarcodeDataUrl(code) {
-  var clean = String(code || '').replace(/[^0-9A-Z]/g, '');
-  var width = 300;
-  var height = 84;
-  var x = 12;
-  var bars = '';
-
-  // Deterministic pseudo pattern from coupon code
-  for (var i = 0; i < clean.length; i++) {
-    var n = clean.charCodeAt(i);
-    var w1 = (n % 3) + 1;
-    var w2 = ((n >> 2) % 3) + 1;
-    var w3 = ((n >> 4) % 3) + 1;
-    bars += '<rect x="' + x + '" y="8" width="' + w1 + '" height="58" fill="#111"/>';
-    x += w1 + 1;
-    bars += '<rect x="' + x + '" y="8" width="' + w2 + '" height="58" fill="#111"/>';
-    x += w2 + 1;
-    bars += '<rect x="' + x + '" y="8" width="' + w3 + '" height="58" fill="#111"/>';
-    x += w3 + 2;
+// ===== Barcode =====
+function renderBarcode(code, targetEl) {
+  if (!targetEl) return;
+  if (typeof JsBarcode !== 'function') {
+    targetEl.innerHTML = '';
+    return;
   }
 
-  var svg = ''
-    + '<svg xmlns="http://www.w3.org/2000/svg" width="' + width + '" height="' + height + '" viewBox="0 0 ' + width + ' ' + height + '">'
-    + '<rect width="100%" height="100%" fill="#fff"/>'
-    + '<rect x="8" y="8" width="2" height="62" fill="#111"/>'
-    + bars
-    + '<rect x="' + (width - 10) + '" y="8" width="2" height="62" fill="#111"/>'
-    + '</svg>';
-
-  return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
-}
-
-function playScanBeep() {
-  var AudioCtx = window.AudioContext || window.webkitAudioContext;
-  if (!AudioCtx) return;
-  var ctx = new AudioCtx();
-  var osc = ctx.createOscillator();
-  var gain = ctx.createGain();
-  osc.type = 'square';
-  osc.frequency.value = 1900;
-  gain.gain.value = 0.001;
-  osc.connect(gain);
-  gain.connect(ctx.destination);
-
-  var now = ctx.currentTime;
-  gain.gain.exponentialRampToValueAtTime(0.16, now + 0.005);
-  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.11);
-  osc.start(now);
-  osc.stop(now + 0.12);
-
-  setTimeout(function() {
-    ctx.close();
-  }, 180);
+  try {
+    // CODE128 supports alphanumeric coupon codes like DARUMA-1050.
+    JsBarcode(targetEl, String(code), {
+      format: 'CODE128',
+      lineColor: '#111',
+      background: '#fff',
+      width: 1.8,
+      height: 58,
+      displayValue: false,
+      margin: 0
+    });
+  } catch (e) {
+    targetEl.innerHTML = '';
+  }
 }
 
 // ===== Confetti =====
