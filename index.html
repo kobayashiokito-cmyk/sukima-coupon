@@ -830,11 +830,11 @@ body {
       </div>
     </div>
 
-    <!-- Coupon 4: 商品20%OFF (Image Main / One item) -->
+    <!-- Coupon 4: 商品20%OFF (Image Main) -->
     <div class="coupon-card image-main" id="coupon-4" data-coupon-id="4">
       <div class="coupon-card-inner">
         <div class="coupon-top">
-          <img src="S__135577606_0.jpg" alt="一点もの商品" class="coupon-product-image">
+          <img src="S__81534978.jpg" alt="対象商品" class="coupon-product-image">
           <div class="coupon-product-caption">
             <div class="coupon-product-title">この商品が20%OFF</div>
             <div class="coupon-product-subtitle">一点もの / 売れたら終了</div>
@@ -848,7 +848,7 @@ body {
           </div>
           <div class="coupon-expiry">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            売り切れ次第終了
+            売り切れ次第終了（クーポンがあっても商品がなくなっている場合があります）
           </div>
           <button class="coupon-btn special-btn" onclick="acquireCoupon(4)">この商品を20%OFFで購入する</button>
         </div>
@@ -920,16 +920,13 @@ const coupons = {
     discount: '20%OFF',
     discountClass: 'special',
     code: 'DARUMA-2004',
-    image: 'S__135577606_0.jpg',
+    image: 'S__81534978.jpg',
     btnClass: 'special-btn',
-    soldOut: false,
-    oneItem: true
+    soldOut: false
   }
 };
 
 // ===== LocalStorage Management =====
-const SOLD_OUT_STORAGE_KEY = 'darumamushi_soldout_coupons';
-
 function getAcquired() {
   try {
     return JSON.parse(localStorage.getItem('darumamushi_coupons') || '{}');
@@ -951,24 +948,6 @@ function removeAcquired(id) {
   localStorage.setItem('darumamushi_coupons', JSON.stringify(data));
 }
 
-function getSoldOutMap() {
-  try {
-    return JSON.parse(localStorage.getItem(SOLD_OUT_STORAGE_KEY) || '{}');
-  } catch (e) {
-    return {};
-  }
-}
-
-function setSoldOutState(id, soldOut) {
-  const data = getSoldOutMap();
-  if (soldOut) {
-    data[id] = { soldOut: true, timestamp: Date.now() };
-  } else {
-    delete data[id];
-  }
-  localStorage.setItem(SOLD_OUT_STORAGE_KEY, JSON.stringify(data));
-}
-
 // ===== Initialize State =====
 function initState() {
   applySoldOutState();
@@ -985,17 +964,11 @@ function initState() {
 }
 
 function isCouponSoldOut(id) {
-  const soldOutMap = getSoldOutMap();
-  const persisted = Boolean(soldOutMap[id] && soldOutMap[id].soldOut);
-  return Boolean((coupons[id] && coupons[id].soldOut) || persisted);
+  return Boolean(coupons[id] && coupons[id].soldOut);
 }
 
 function isReusableCoupon(id) {
   return Boolean(coupons[id] && coupons[id].reusable);
-}
-
-function isOneItemCoupon(id) {
-  return Boolean(coupons[id] && coupons[id].oneItem);
 }
 
 function markAsSoldOut(id) {
@@ -1052,14 +1025,6 @@ function acquireCoupon(id) {
 
   if (isReusableCoupon(id)) {
     markAsReusableReady(id);
-    showModal(id);
-    launchConfetti();
-    return;
-  }
-
-  if (isOneItemCoupon(id)) {
-    setSoldOutState(id, true);
-    markAsSoldOut(id);
     showModal(id);
     launchConfetti();
     return;
