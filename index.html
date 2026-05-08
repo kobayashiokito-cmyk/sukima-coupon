@@ -939,8 +939,6 @@ body {
 <!-- Modal -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal" id="modal">
-    <img src="" alt="ダルマむし" class="modal-daruma" id="modalDaruma">
-    <div class="modal-main-text">ダルマむしが<br>クーポンを運んできました</div>
     <div class="modal-sub-text">これはあなた専用です</div>
     <div class="modal-discount" id="modalDiscount"></div>
     <div class="modal-code-box">
@@ -1152,12 +1150,10 @@ function showModal(id) {
   if (!coupon) return;
 
   const overlay = document.getElementById('modalOverlay');
-  const daruma = document.getElementById('modalDaruma');
   const discount = document.getElementById('modalDiscount');
   const barcode = document.getElementById('modalBarcode');
   const barcodeNumber = document.getElementById('modalBarcodeNumber');
 
-  daruma.src = coupon.image;
   discount.textContent = coupon.discount;
   discount.className = 'modal-discount ' + coupon.discountClass;
   renderBarcode(coupon.code, barcode);
@@ -1168,15 +1164,6 @@ function showModal(id) {
   // Force reflow
   overlay.offsetHeight;
   overlay.classList.add('active', 'fade-in');
-
-  // Daruma bounce animation
-  daruma.classList.remove('bounce', 'wobble');
-  void daruma.offsetHeight;
-  daruma.classList.add('bounce');
-
-  setTimeout(function() {
-    daruma.classList.add('wobble');
-  }, 800);
 
   // Prevent body scroll
   document.body.style.overflow = 'hidden';
