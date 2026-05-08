@@ -855,6 +855,30 @@ body {
       </div>
     </div>
 
+    <!-- Coupon 5: 商品20%OFF (Image Main) -->
+    <div class="coupon-card image-main" id="coupon-5" data-coupon-id="5">
+      <div class="coupon-card-inner">
+        <div class="coupon-top">
+          <img src="S__81534978.jpg" alt="対象商品" class="coupon-product-image">
+          <div class="coupon-product-caption">
+            <div class="coupon-product-title">この商品が20%OFF</div>
+            <div class="coupon-product-subtitle">期間限定クーポン</div>
+          </div>
+        </div>
+        <div class="coupon-bottom">
+          <div class="coupon-conditions">
+            <span class="coupon-condition-tag">併用不可</span>
+            <span class="coupon-condition-tag">会計時に画面提示</span>
+          </div>
+          <div class="coupon-expiry">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            売り切れ次第終了
+          </div>
+          <button class="coupon-btn special-btn" onclick="acquireCoupon(5)">この商品を20%OFFで購入する</button>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <!-- Footer -->
@@ -920,6 +944,14 @@ const coupons = {
     discount: '20%OFF',
     discountClass: 'special',
     code: 'DARUMA-2004',
+    image: 'S__81534978.jpg',
+    btnClass: 'special-btn',
+    soldOut: false
+  },
+  5: {
+    discount: '20%OFF',
+    discountClass: 'special',
+    code: 'DARUMA-2005',
     image: 'S__81534978.jpg',
     btnClass: 'special-btn',
     soldOut: false
