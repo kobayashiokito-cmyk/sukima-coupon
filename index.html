@@ -422,6 +422,40 @@ body {
   display: none;
 }
 
+.coupon-card.image-main .coupon-top {
+  padding: 0;
+  display: block;
+}
+
+.coupon-product-image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+}
+
+.coupon-product-caption {
+  padding: 12px 16px 10px;
+  border-bottom: 1px dashed #eadfce;
+}
+
+.coupon-product-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: #3b3127;
+  letter-spacing: 0.04em;
+}
+
+.coupon-product-subtitle {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #7b6f60;
+}
+
+.coupon-card.image-main .coupon-bottom {
+  padding-top: 12px;
+}
+
 /* ===== Modal Overlay ===== */
 .modal-overlay {
   display: none;
@@ -796,6 +830,31 @@ body {
       </div>
     </div>
 
+    <!-- Coupon 4: 商品20%OFF (Image Main / One item) -->
+    <div class="coupon-card image-main" id="coupon-4" data-coupon-id="4">
+      <div class="coupon-card-inner">
+        <div class="coupon-top">
+          <img src="S__135577606_0.jpg" alt="一点もの商品" class="coupon-product-image">
+          <div class="coupon-product-caption">
+            <div class="coupon-product-title">この商品が20%OFF</div>
+            <div class="coupon-product-subtitle">一点もの / 売れたら終了</div>
+          </div>
+        </div>
+        <div class="coupon-bottom">
+          <div class="coupon-conditions">
+            <span class="coupon-condition-tag">一点限り</span>
+            <span class="coupon-condition-tag">取り置き不可</span>
+            <span class="coupon-condition-tag">会計時に画面提示</span>
+          </div>
+          <div class="coupon-expiry">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            売り切れ次第終了
+          </div>
+          <button class="coupon-btn special-btn" onclick="acquireCoupon(4)">この商品を20%OFFで購入する</button>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <!-- Footer -->
@@ -856,10 +915,21 @@ const coupons = {
     btnClass: 'special-btn',
     soldOut: false,
     reusable: true
+  },
+  4: {
+    discount: '20%OFF',
+    discountClass: 'special',
+    code: 'DARUMA-2004',
+    image: 'S__135577606_0.jpg',
+    btnClass: 'special-btn',
+    soldOut: false,
+    oneItem: true
   }
 };
 
 // ===== LocalStorage Management =====
+const SOLD_OUT_STORAGE_KEY = 'darumamushi_soldout_coupons';
+
 function getAcquired() {
   try {
     return JSON.parse(localStorage.getItem('darumamushi_coupons') || '{}');
@@ -881,6 +951,24 @@ function removeAcquired(id) {
   localStorage.setItem('darumamushi_coupons', JSON.stringify(data));
 }
 
+function getSoldOutMap() {
+  try {
+    return JSON.parse(localStorage.getItem(SOLD_OUT_STORAGE_KEY) || '{}');
+  } catch (e) {
+    return {};
+  }
+}
+
+function setSoldOutState(id, soldOut) {
+  const data = getSoldOutMap();
+  if (soldOut) {
+    data[id] = { soldOut: true, timestamp: Date.now() };
+  } else {
+    delete data[id];
+  }
+  localStorage.setItem(SOLD_OUT_STORAGE_KEY, JSON.stringify(data));
+}
+
 // ===== Initialize State =====
 function initState() {
   applySoldOutState();
@@ -897,11 +985,17 @@ function initState() {
 }
 
 function isCouponSoldOut(id) {
-  return Boolean(coupons[id] && coupons[id].soldOut);
+  const soldOutMap = getSoldOutMap();
+  const persisted = Boolean(soldOutMap[id] && soldOutMap[id].soldOut);
+  return Boolean((coupons[id] && coupons[id].soldOut) || persisted);
 }
 
 function isReusableCoupon(id) {
   return Boolean(coupons[id] && coupons[id].reusable);
+}
+
+function isOneItemCoupon(id) {
+  return Boolean(coupons[id] && coupons[id].oneItem);
 }
 
 function markAsSoldOut(id) {
@@ -958,6 +1052,14 @@ function acquireCoupon(id) {
 
   if (isReusableCoupon(id)) {
     markAsReusableReady(id);
+    showModal(id);
+    launchConfetti();
+    return;
+  }
+
+  if (isOneItemCoupon(id)) {
+    setSoldOutState(id, true);
+    markAsSoldOut(id);
     showModal(id);
     launchConfetti();
     return;
