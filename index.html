@@ -845,23 +845,21 @@ body {
     <div class="coupon-card image-main" id="coupon-4" data-coupon-id="4">
       <div class="coupon-card-inner">
         <div class="coupon-top">
-          <img src="S__81534980.jpg" alt="対象商品" class="coupon-product-image">
+          <img src="スクリーンショット 2026-06-02 10.17.21.png" alt="対象商品" class="coupon-product-image">
           <div class="coupon-product-caption">
-            <div class="coupon-product-title">この商品が20%OFF</div>
-            <div class="coupon-product-subtitle">一点もの / 売れたら終了</div>
+            <div class="coupon-product-title">この商品が40%OFF</div>
+            <div class="coupon-product-subtitle">通常2,420円が特別価格1,450円</div>
           </div>
         </div>
         <div class="coupon-bottom">
           <div class="coupon-conditions">
-            <span class="coupon-condition-tag">一点限り</span>
-            <span class="coupon-condition-tag">取り置き不可</span>
             <span class="coupon-condition-tag">会計時に画面提示</span>
           </div>
           <div class="coupon-expiry">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
             売り切れ次第終了（クーポンがあっても商品がなくなっている場合があります）
           </div>
-          <button class="coupon-btn special-btn" onclick="acquireCoupon(4)">この商品を20%OFFで購入する</button>
+          <button class="coupon-btn special-btn" onclick="acquireCoupon(4)">この商品を40%OFFで購入する</button>
         </div>
       </div>
     </div>
@@ -872,7 +870,7 @@ body {
         <div class="coupon-top">
           <img src="S__81534978.jpg" alt="対象商品" class="coupon-product-image">
           <div class="coupon-product-caption">
-            <div class="coupon-product-title">この商品が20%OFF</div>
+            <div class="coupon-product-title">この商品が30%OFF</div>
             <div class="coupon-product-subtitle">期間限定クーポン</div>
           </div>
         </div>
@@ -885,7 +883,7 @@ body {
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
             売り切れ次第終了
           </div>
-          <button class="coupon-btn special-btn" onclick="acquireCoupon(5)">この商品を20%OFFで購入する</button>
+          <button class="coupon-btn special-btn" onclick="acquireCoupon(5)">この商品を30%OFFで購入する</button>
         </div>
       </div>
     </div>
@@ -998,15 +996,16 @@ const coupons = {
     reusable: true
   },
   4: {
-    discount: '20%OFF',
+    discount: '40%OFF',
     discountClass: 'special',
     code: 'DARUMA-2004',
-    image: 'S__81534978.jpg',
+    image: 'スクリーンショット 2026-06-02 10.17.21.png',
     btnClass: 'special-btn',
-    soldOut: true
+    soldOut: false,
+    reusable: true
   },
   5: {
-    discount: '20%OFF',
+    discount: '30%OFF',
     discountClass: 'special',
     code: 'DARUMA-2005',
     image: 'S__81534978.jpg',
